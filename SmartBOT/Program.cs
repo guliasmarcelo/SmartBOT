@@ -1,7 +1,7 @@
 ﻿
 Console.WriteLine("Bem-vindo, posso te ajudar com alguma dúvida ou curiosidade sobre a Tesla!");
 var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
-var chatService = new ChatService(apiKey);
+var chatService = new ChatService1(apiKey);
 
 
 while (true)

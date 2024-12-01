@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 
-public class ChatService
+public class ChatService1
 {
     private readonly HttpClient _httpClient;
     private const string ApiUrl = "https://api.openai.com/v1/chat/completions";
@@ -11,7 +11,7 @@ public class ChatService
     // Lista para armazenar o histórico de mensagens
     private readonly List<object> _messages;
 
-    public ChatService(string apiKey)
+    public ChatService1(string apiKey)
     {
         _apiKey = apiKey;
         _httpClient = new HttpClient();
