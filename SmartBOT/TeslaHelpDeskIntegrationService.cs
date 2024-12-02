@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SmartBOT
 {
-    public class HelpDeskIntegrationService
+    public class TeslaHelpDeskIntegrationService
     {
         private readonly OpenAIEmbeddingsService _embeddingsService;
         private readonly TelaProjectSearchService _searchService;
         private readonly TeslaHelpDeskService _helpDeskService;
 
-        public HelpDeskIntegrationService()
+        public TeslaHelpDeskIntegrationService()
         {
             _searchService = new TelaProjectSearchService();
             _helpDeskService = new TeslaHelpDeskService();
