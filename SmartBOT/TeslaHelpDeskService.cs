@@ -6,6 +6,10 @@ using System.Text.Json;
 
 namespace SmartBOT;
 
+
+/// <summary>
+/// Classe resonsável por realizar a chat com o agente de HelpDesk da Tesla
+/// </summary>
 public class TeslaHelpDeskService : IChatService
 {
     private readonly HttpClient _httpClient;
@@ -44,10 +48,10 @@ public class TeslaHelpDeskService : IChatService
         };
     }
 
-    public async Task<string> SendPromptAsync(string userMessage)
+    public async Task<string> SendPromptAsync(string prompt)
     {
         // Adiciona a mensagem do usuário ao histórico
-        _messages.Add(new { role = "user", content = userMessage });
+        _messages.Add(new { role = "user", content = prompt });
 
         // Cria o corpo da requisição com o histórico completo
         var requestBody = new

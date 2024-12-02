@@ -8,6 +8,7 @@ namespace SmartBOT
 {
     public class HelpDeskIntegrationService
     {
+        private readonly OpenAIEmbeddingsService _embeddingsService;
         private readonly TelaProjectSearchService _searchService;
         private readonly TeslaHelpDeskService _helpDeskService;
 
@@ -15,12 +16,21 @@ namespace SmartBOT
         {
             _searchService = new TelaProjectSearchService();
             _helpDeskService = new TeslaHelpDeskService();
+            _embeddingsService = new OpenAIEmbeddingsService();
         }
 
-        public async Task<string> HandleUserQueryAsync(string userQuestion, float[] embeddings)
+        /// <summary>
+        /// Classe responsável por orquestrar a requisição do usuário
+        /// </summary>
+        /// <param name="userQuestion"></param>
+        /// <returns></returns>
+        public async Task<string> HandleUserQueryAsync(string userQuestion)
         {
-            // Passo 1: Buscar a base de conhecimento banco vetorial
-            var searchResults = await _searchService.SearchAsync(embeddings);
+            // Passo 1: Embedar a pergunta do cliente
+            var embeddedQuestion = await _embeddingsService.GetEmbeddingAsync(userQuestion);
+
+            // Passo 2: Buscar a base de conhecimento banco vetorial
+            var searchResults = await _searchService.SearchAsync(embeddedQuestion);
 
             // Passo 2: Construir o prompt baseado nos resultados
             var baseKnowledge = string.Join("\n", searchResults.Select(r => $"- {r.Content}"));

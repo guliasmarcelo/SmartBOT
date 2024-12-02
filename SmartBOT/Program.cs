@@ -1,23 +1,15 @@
 ﻿using SmartBOT;
 
-var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
-
-
-
-var HelpDeskService = new TeslaHelpDeskService();
-var EmbeddingsService = new OpenAIEmbeddingsService();
-var searchService = new TelaProjectSearchService();
-
+var integrationService = new HelpDeskIntegrationService();
 
 Console.WriteLine("Welcome to the chat with Tesla Assistent ClaudIA! How can I Help you?");
-
 
 while (true)
 {
     Console.Write("You: ");
-    var userMessage = Console.ReadLine();
+    var userQuestion = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(userMessage) || userMessage.ToLower() == "exit")
+    if (string.IsNullOrWhiteSpace(userQuestion) || userQuestion.ToLower() == "exit")
     {
         Console.WriteLine("Closing the chat. See you!");
         break;
@@ -26,25 +18,24 @@ while (true)
 
     try
     {
-        var embeddedQuestion = await EmbeddingsService.GetEmbeddingAsync(userMessage);
+        var response = await integrationService.HandleUserQueryAsync(userQuestion);
+        Console.WriteLine("Resposta da ClaudIA:");
+        Console.WriteLine(response);
 
+        //var embeddedQuestion = await EmbeddingsService.GetEmbeddingAsync(userMessage);
         //Console.WriteLine("Embedding question:");
         //Console.WriteLine(string.Join(", ", embeddedQuestion));
 
+        //var context = await searchService.SearchAsync(embeddedQuestion);
+        //foreach (var result in context)
+        //{
+        //    Console.WriteLine($"Content: {result.Content}");
+        //    Console.WriteLine($"Type: {result.Type}");
+        //    Console.WriteLine($"Score: {result.Score}");
+        //    Console.WriteLine("---");
+        //}
 
-        var context = await searchService.SearchAsync(embeddedQuestion);
-        foreach (var result in context)
-        {
-            Console.WriteLine($"Content: {result.Content}");
-            Console.WriteLine($"Type: {result.Type}");
-            Console.WriteLine($"Score: {result.Score}");
-            Console.WriteLine("---");
-        }
 
-
-      
-        //var teslaResponse = await teslaHelpDeskService.SendUserMessageAsync(userMessage);
-        //Console.WriteLine($"ClaudiIA: {teslaResponse}");
     }
     catch (Exception ex)
     {
