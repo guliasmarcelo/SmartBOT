@@ -1,16 +1,12 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 
 
 namespace SmartBOT;
 
-public class TeslaChatService
+public class TeslaHelpDeskService : IChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
@@ -18,8 +14,11 @@ public class TeslaChatService
     // Histórico de mensagens
     private readonly List<object> _messages;
 
-    public TeslaChatService(string apiKey)
+    public TeslaHelpDeskService()
     {
+        var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
+
+
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.openai.com/v1/")
@@ -37,15 +36,15 @@ public class TeslaChatService
         // Inicializa o histórico com uma mensagem do sistema
         _messages = new List<object>
         {
-            new 
-            { 
-                role = "system", 
-                content = "You are a support assistant whose goal is to answer questions about Tela and its products, and your name is ClaudIA." 
+            new
+            {
+                role = "system",
+                content = "You are a support assistant whose goal is to answer questions about Tela and its products, and your name is ClaudIA."
             }
         };
     }
 
-    public async Task<string> SendChatMessageAsync(string model, string userMessage)
+    public async Task<string> SendPromptAsync(string userMessage)
     {
         // Adiciona a mensagem do usuário ao histórico
         _messages.Add(new { role = "user", content = userMessage });
@@ -53,7 +52,7 @@ public class TeslaChatService
         // Cria o corpo da requisição com o histórico completo
         var requestBody = new
         {
-            model,
+            model = "gpt-4o",
             messages = _messages
         };
 
