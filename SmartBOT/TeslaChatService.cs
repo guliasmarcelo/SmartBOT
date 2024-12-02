@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace SmartBOT;
 
-public class OpenAIService
+public class TeslaChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
@@ -18,7 +18,7 @@ public class OpenAIService
     // Histórico de mensagens
     private readonly List<object> _messages;
 
-    public OpenAIService(string apiKey)
+    public TeslaChatService(string apiKey)
     {
         _httpClient = new HttpClient
         {

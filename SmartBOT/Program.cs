@@ -4,7 +4,7 @@ var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dP
 
 
 
-var openAIService = new OpenAIService(apiKey);
+var openAIService = new TeslaChatService(apiKey);
 
 Console.WriteLine("Welcome to the chat with Tesla Assistent ClaudIA!");
 
