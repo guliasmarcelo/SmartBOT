@@ -12,13 +12,13 @@ namespace SmartBOT
     /// <summary>
     /// Classe responsável por trazer a base de conhecimento através de uma busca vetorial
     /// </summary>
-    public class TelaProjectSearchService
+    public class AzureAISearchService
     {
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly string _azureApiKey;
 
-        public TelaProjectSearchService()
+        public AzureAISearchService()
         {            
             _azureApiKey = "RG3f9GfswPkkxYKKPRX3wqObtBpdvlwQ9etiv1rX7TAzSeC677ln";
 
@@ -37,20 +37,20 @@ namespace SmartBOT
             };
         }
 
-        public async Task<List<SearchResult>> SearchAsync(float[] embeddings)
+        public async Task<List<SearchResult>> SearchAsync(float[] embeddings, string projectName, int top, int k)
         {
             var requestBody = new
             {
                 count = true,
                 select = "content, type",
-                top = 10,
-                filter = $"projectName eq 'tesla_motors'",
+                top = top,
+                filter = $"projectName eq '{projectName}'",
                 vectorQueries = new[]
                 {
                     new
                     {
                         vector = embeddings,
-                        k = 3,
+                        k = k,
                         fields = "embeddings",
                         kind = "vector"
                     }

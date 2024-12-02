@@ -10,15 +10,14 @@ namespace SmartBOT;
 /// <summary>
 /// Classe resonsável por realizar a chat com o agente de HelpDesk da Tesla
 /// </summary>
-public class TeslaHelpDeskService : IChatService
+public class OpenAIChatService 
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly List<object> _messages; // message histories
 
-    // Histórico de mensagens
-    private readonly List<object> _messages;
 
-    public TeslaHelpDeskService()
+    public OpenAIChatService(string systemMessage)
     {
         var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
 
@@ -38,25 +37,46 @@ public class TeslaHelpDeskService : IChatService
         };
 
         // Inicializa o histórico com uma mensagem do sistema
-        _messages = new List<object>
+        _messages = new List<object>()
         {
-            new
+            new 
             {
                 role = "system",
-                content = "You are a support assistant whose goal is to answer questions about Tela and its products, and your name is ClaudIA."
+                content = systemMessage
             }
         };
     }
 
-    public async Task<string> SendPromptAsync(string prompt)
+    /// <summary>
+    /// Envia uma mensagem do usuário com base de conhecimento adicional
+    /// </summary>
+    /// <param name="persona"></param>
+    /// <param name="userMessage"></param>
+    /// <param name="knowledgeBase"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    /// 
+    public async Task<string> SendUserMessageAsync(string userMessage, string knowledgeBase, string model)
     {
+
+        // Adiciona a base de conhecimento como uma mensagem adicional do tipo "system"
+        if (!string.IsNullOrWhiteSpace(knowledgeBase))
+        {
+            _messages.Add(new
+            {
+                role = "system",
+                content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
+            });
+        }
+        
         // Adiciona a mensagem do usuário ao histórico
-        _messages.Add(new { role = "user", content = prompt });
+        _messages.Add(new { role = "user", content = userMessage });
 
         // Cria o corpo da requisição com o histórico completo
         var requestBody = new
         {
-            model = "gpt-4o",
+            model = model,
             messages = _messages
         };
 
