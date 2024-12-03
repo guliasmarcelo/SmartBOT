@@ -1,13 +1,15 @@
-﻿namespace SmartBOT.WebAPI.Core;
+﻿
+
+namespace SmartBOT.WebAPI.Core;
 
 /// <summary>
 /// Serviço de integração para orquestrar chamadas entre serviços de embeddings, busca e chat.
 /// </summary>
-public class TeslaHelpDeskIntegrationService
+public class TeslaHelpDeskService : IHelpDeskService
 {
     private readonly OpenAIChatService _chatService;
     private readonly OpenAIEmbeddingsService _embeddingsService;
-    private readonly AzureAISearchService _searchService;
+    private readonly AzureVectorSearchService _searchService;
 
     // Mensagem de sistema para configurar o comportamento do agente
     private const string SystemMessage = @"  
@@ -16,12 +18,12 @@ Your responses must be concise, using simple language, and limited to no more th
 If the user asks about anything unrelated to Tesla Motors or its products, politely inform them that you can only provide information about Tesla Motors.
     ";
 
-    public TeslaHelpDeskIntegrationService()
+    public TeslaHelpDeskService()
     {
         // Inicializar os serviços
         _chatService = new OpenAIChatService();
         _embeddingsService = new OpenAIEmbeddingsService();
-        _searchService = new AzureAISearchService();
+        _searchService = new AzureVectorSearchService();
     }
 
     /// <summary>

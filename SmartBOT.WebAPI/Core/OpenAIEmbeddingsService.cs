@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace SmartBOT.WebAPI.Core;
 
-public class OpenAIEmbeddingsService 
+public class OpenAIEmbeddingsService : IEmbeddingsService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;

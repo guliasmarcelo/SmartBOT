@@ -8,9 +8,9 @@ namespace SmartBOT.WebAPI.Controllers;
 [Route("api/chat")]
 public class ChatController : ControllerBase
 {
-    private readonly TeslaHelpDeskIntegrationService _integrationService;
+    private readonly TeslaHelpDeskService _integrationService;
 
-    public ChatController(TeslaHelpDeskIntegrationService integrationService)
+    public ChatController(TeslaHelpDeskService integrationService)
     {
         _integrationService = integrationService;
     }

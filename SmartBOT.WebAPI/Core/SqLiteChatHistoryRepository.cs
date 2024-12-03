@@ -1,12 +1,13 @@
 ﻿using Microsoft.Data.Sqlite;
 
+
 namespace SmartBOT.WebAPI.Core;
 
-public class ChatHistoryRepository
+public class SqLiteChatHistoryRepository : IChatHistoryRepository
 {
     private readonly string _connectionString;
 
-    public ChatHistoryRepository(string databasePath = "chat_history.db")
+    public SqLiteChatHistoryRepository(string databasePath = "chat_history.db")
     {
         _connectionString = $"Data Source={databasePath}";
         InitializeDatabase();

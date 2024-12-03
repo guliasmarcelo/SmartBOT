@@ -1,18 +1,16 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using SmartBOT;
 using SmartBOT.WebAPI.Core;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adicionar serviços
 builder.Services.AddControllers();
-builder.Services.AddSingleton<OpenAIChatService>();
-builder.Services.AddSingleton<OpenAIEmbeddingsService>();
-builder.Services.AddSingleton<AzureAISearchService>();
-builder.Services.AddSingleton<ChatHistoryRepository>();
-builder.Services.AddSingleton<TeslaHelpDeskIntegrationService>();
+builder.Services.AddSingleton<IChatService, OpenAIChatService>();
+builder.Services.AddSingleton<IEmbeddingsService, OpenAIEmbeddingsService>();
+builder.Services.AddSingleton<IVectorSearchService, AzureVectorSearchService>();
+builder.Services.AddSingleton<IChatHistoryRepository, SqLiteChatHistoryRepository>();
+builder.Services.AddSingleton<IHelpDeskService, TeslaHelpDeskService>();
 
 
 var app = builder.Build();

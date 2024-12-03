@@ -3,13 +3,14 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 
+
 namespace SmartBOT.WebAPI.Core;
 
 /// <summary>
 /// Classe stateless para realizar o chat com o agente de HelpDesk da Tesla.
 /// Gerencia mensagens e histórico por meio de argumentos.
 /// </summary>
-public class OpenAIChatService
+public class OpenAIChatService : IChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
@@ -127,7 +128,7 @@ public class OpenAIChatService
         // Adicionar FAQ como mensagem do sistema, se fornecida
         if (!string.IsNullOrWhiteSpace(knowledgeBase))
         {
-            var knolodgeMessmessage = new ChatMessage 
+            var knolodgeMessmessage = new ChatMessage
             {
                 Role = "system",
                 Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
