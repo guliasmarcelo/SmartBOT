@@ -18,7 +18,11 @@ builder.Services.AddSingleton<TeslaHelpDeskIntegrationService>();
 var app = builder.Build();
 
 
-builder.Services.AddControllers();
-
+// Configurar middlewares
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

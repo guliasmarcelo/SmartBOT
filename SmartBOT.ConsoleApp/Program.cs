@@ -1,14 +1,17 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
-var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000/") };
+
+var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5053/") };
+
 
 // Criar uma nova conversa
 var helpdeskId = Guid.NewGuid().ToString();
 
 Console.ForegroundColor = ConsoleColor.Green;
-Console.WriteLine("Welcome to the chat with Tesla Assistant ClaudIA! How can I help you?");
+Console.WriteLine("Welcome to the chat with Tesla Assistant ClaudIA! How can I help you? Como?");
 Console.WriteLine($"Conversation ID: {helpdeskId}");
 
 while (true)
@@ -53,6 +56,7 @@ while (true)
 
 public class ChatResponse
 {
+    [JsonPropertyName("response")]
     public string Response { get; set; }
 }
 
