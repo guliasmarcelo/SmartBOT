@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SmartBOT;
 
-namespace SmartBOT
+public struct ChatMessage
 {
-    public struct ChatMessage
-    {
-        public string Role { get; set; } // Pode ser "system", "user" ou "assistant"
-        public string Content { get; set; } // Conteúdo da mensagem
-    }
-
+    public string Role { get; set; } // Pode ser "system", "user" ou "assistant"
+    public string Content { get; set; } // Conteúdo da mensagem
 }
