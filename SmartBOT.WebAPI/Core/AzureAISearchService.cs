@@ -3,7 +3,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SmartBOT;
+
+namespace SmartBOT.WebAPI.Core;
 
 /// <summary>
 /// Classe responsável por trazer a base de conhecimento através de uma busca vetorial
