@@ -1,25 +1,15 @@
 ﻿using SmartBOT;
 
+// Instanciar o serviço de integração
 var integrationService = new TeslaHelpDeskIntegrationService();
 
-Console.ForegroundColor = ConsoleColor.Green;
+// Criar uma nova conversa
+var helpdeskId = Guid.NewGuid().ToString();
 
-// Mostrar título com efeito de digitação
-string title = "Welcome to SmartBOT!";
-TypeEffect(title, delay: 100);
-
-Console.WriteLine("\n");
-
-// Mostrar animação de carregamento
-Console.ForegroundColor = ConsoleColor.Yellow;
-LoadingAnimation("Initializing", 3);
-
-// Finalizar abertura
-Console.ResetColor();
-Console.WriteLine("\nApplication is ready!");
 
 Console.ForegroundColor = ConsoleColor.Green;
-Console.WriteLine("Welcome to the chat with Tesla Assistent ClaudIA! How can I Help you?");
+Console.WriteLine("Welcome to the chat with Tesla Assistant ClaudIA! How can I help you?");
+Console.WriteLine($"Conversation ID: {helpdeskId}");
 
 while (true)
 {
@@ -34,14 +24,14 @@ while (true)
         break;
     }
 
-
     try
     {
-        var response = await integrationService.HandleUserQueryAsync(userQuestion);
+        // Enviar a mensagem para o assistente via integração
+        var response = await integrationService.HandleUserQueryAsync(helpdeskId, userQuestion);
+
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Resposta da ClaudIA:");
         Console.WriteLine(response);
-
     }
     catch (Exception ex)
     {
@@ -51,23 +41,3 @@ while (true)
 }
 
 
-// Método para efeito de digitação
-static void TypeEffect(string text, int delay = 50)
-{
-    foreach (char c in text)
-    {
-        Console.Write(c);
-        Thread.Sleep(delay); // Atraso entre os caracteres
-    }
-}
-
-// Método para animação de carregamentostatic void LoadingAnimation(string text, int dots = 3, int delay = 500)
-static void LoadingAnimation(string text, int dots = 3, int delay = 500)
-{
-    for (int i = 0; i < dots; i++)
-    {
-        Console.Write($"\r{text}{new string('.', i + 1)}   "); // Atualiza a linha com mais pontos
-        Thread.Sleep(delay);
-    }
-    Console.Write("\r{text}... Done!"); // Mensagem final
-}

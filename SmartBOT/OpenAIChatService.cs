@@ -1,86 +1,153 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-
-
+using Microsoft.Data.Sqlite;
 
 namespace SmartBOT;
 
-
 /// <summary>
-/// Classe resonsável por realizar a chat com o agente de HelpDesk da Tesla
+/// Classe stateless para realizar o chat com o agente de HelpDesk da Tesla.
+/// Gerencia mensagens e histórico por meio de argumentos.
 /// </summary>
-public class OpenAIChatService 
+public class OpenAIChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly List<object> _messages; // message histories
+    private readonly string _connectionString; // Caminho do banco SQLite
 
-
-    public OpenAIChatService(string systemMessage)
+    public OpenAIChatService(string databasePath = "chat_history.db")
     {
         var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
-
 
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.openai.com/v1/")
         };
-
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-        // Set toCamelCase, expected format from OpenAI.
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         };
 
-        // Inicializa o histórico com uma mensagem do sistema
-        _messages = new List<object>()
-        {
-            new 
-            {
-                role = "system",
-                content = systemMessage
-            }
-        };
+        _connectionString = $"Data Source={databasePath}";
+        InitializeDatabase();
     }
 
-    /// <summary>
-    /// Envia uma mensagem do usuário com base de conhecimento adicional
-    /// </summary>
-    /// <param name="persona"></param>
-    /// <param name="userMessage"></param>
-    /// <param name="knowledgeBase"></param>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    /// 
-    public async Task<string> SendUserMessageAsync(string userMessage, string knowledgeBase, string model)
+    private void InitializeDatabase()
     {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
 
-        // Adiciona a base de conhecimento como uma mensagem adicional do tipo "system"
-        if (!string.IsNullOrWhiteSpace(knowledgeBase))
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            CREATE TABLE IF NOT EXISTS ChatHistory (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                HelpdeskId TEXT NOT NULL,
+                Role TEXT NOT NULL,
+                Content TEXT NOT NULL,
+                Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        ";
+        command.ExecuteNonQuery();
+    }
+
+    public async Task<List<ChatMessage>> LoadChatHistoryAsync(string helpdeskId)
+    {
+        var messages = new List<ChatMessage>();
+
+        using var connection = new SqliteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT Role, Content
+            FROM ChatHistory
+            WHERE HelpdeskId = @helpdeskId
+            ORDER BY Timestamp;
+        ";
+        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
         {
-            _messages.Add(new
+            messages.Add(new ChatMessage
             {
-                role = "system",
-                content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
+                Role = reader.GetString(0),
+                Content = reader.GetString(1)
             });
         }
-        
-        // Adiciona a mensagem do usuário ao histórico
-        _messages.Add(new { role = "user", content = userMessage });
 
-        // Cria o corpo da requisição com o histórico completo
+        return messages;
+    }
+
+    private async Task SaveMessageAsync(string helpdeskId, ChatMessage message)
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            INSERT INTO ChatHistory (HelpdeskId, Role, Content)
+            VALUES (@helpdeskId, @role, @content);
+        ";
+        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
+        command.Parameters.AddWithValue("@role", message.Role);
+        command.Parameters.AddWithValue("@content", message.Content);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<string> SendUserMessageAsync(
+     string helpdeskId,
+     List<ChatMessage> messages,
+     string userMessage,
+     string knowledgeBase,
+     string model,
+     string systemMessage)
+    {
+        // Adicionar a mensagem de sistema na primeira interação
+        if (!messages.Any())
+        {
+            messages.Add(new ChatMessage
+            {
+                Role = "system",
+                Content = systemMessage
+            });
+
+            // Salvar a mensagem de sistema no histórico
+            await SaveMessageAsync(helpdeskId, new ChatMessage
+            {
+                Role = "system",
+                Content = systemMessage
+            });
+        }
+
+        // Adicionar FAQ como mensagem do sistema, se fornecida
+        if (!string.IsNullOrWhiteSpace(knowledgeBase))
+        {
+            var knolodgeMessmessage = new ChatMessage 
+            {
+                Role = "system",
+                Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
+            };
+            messages.Add(knolodgeMessmessage);
+            await SaveMessageAsync(helpdeskId, knolodgeMessmessage);
+        }
+
+        // Adicionar mensagem do usuário
+        var userMessageObj = new ChatMessage { Role = "user", Content = userMessage };
+        messages.Add(userMessageObj);
+        await SaveMessageAsync(helpdeskId, userMessageObj);
+
+        // Preparar requisição para OpenAI
         var requestBody = new
         {
             model = model,
-            messages = _messages
+            messages = messages
         };
 
-        // Envia a requisição
         var content = new StringContent(JsonSerializer.Serialize(requestBody, _jsonOptions), Encoding.UTF8, "application/json");
         var response = await _httpClient.PostAsync("chat/completions", content);
 
@@ -90,7 +157,7 @@ public class OpenAIChatService
             throw new Exception($"Erro na API: {error}");
         }
 
-        // Processa a resposta
+        // Processar resposta
         var responseBody = await response.Content.ReadAsStringAsync();
         using var jsonDocument = JsonDocument.Parse(responseBody);
         var assistantMessage = jsonDocument.RootElement
@@ -99,11 +166,15 @@ public class OpenAIChatService
             .GetProperty("content")
             .GetString();
 
-        // Adiciona a resposta do assistente ao histórico
-        _messages.Add(new { role = "assistant", content = assistantMessage });
+        // Salvar resposta do assistente
+        if (assistantMessage != null)
+        {
+            var assistantMessageObj = new ChatMessage { Role = "assistant", Content = assistantMessage };
+            messages.Add(assistantMessageObj);
+            await SaveMessageAsync(helpdeskId, assistantMessageObj);
+        }
 
-        return assistantMessage ?? throw new Exception("Error when trying to answear the question!");
+        return assistantMessage ?? throw new Exception("Error when trying to answer the question!");
     }
 
 }
-
