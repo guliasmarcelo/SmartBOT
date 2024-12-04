@@ -53,6 +53,13 @@ Before running the solution, ensure that the API keys and connection strings are
 
 ---
 
+
+## **Project Setup**
+
+### **1. Clone the Repository**
+
+Clone the repository to your local machine:
+
 ```bash
 git clone https://github.com/your-username/smartbot.git
 cd smartbot
