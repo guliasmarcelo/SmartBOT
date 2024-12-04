@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 
-
 namespace SmartBOT.WebAPI.Core;
 
 public class SqLiteChatHistoryRepository : IChatHistoryRepository
@@ -14,7 +13,7 @@ public class SqLiteChatHistoryRepository : IChatHistoryRepository
         {
             throw new Exception("SqLiteConnectionString not found in configuration.");
         }
-        
+
         InitializeDatabase();
     }
 
@@ -25,52 +24,60 @@ public class SqLiteChatHistoryRepository : IChatHistoryRepository
 
         var command = connection.CreateCommand();
         command.CommandText = @"
-                CREATE TABLE IF NOT EXISTS ChatHistory (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    UserMessage TEXT NOT NULL,
-                    AssistantResponse TEXT NOT NULL,
-                    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                );
-            ";
+            CREATE TABLE IF NOT EXISTS ChatHistory (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                HelpdeskId TEXT NOT NULL,
+                Role TEXT NOT NULL,
+                Content TEXT NOT NULL,
+                Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        ";
         command.ExecuteNonQuery();
     }
 
-    public async Task SaveMessageAsync(string userMessage, string assistantResponse)
+    public async Task<List<ChatMessage>> LoadChatHistoryAsync(string helpdeskId)
+    {
+        var messages = new List<ChatMessage>();
+
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
+        await connection.OpenAsync();
+
+        var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT Role, Content
+            FROM ChatHistory
+            WHERE HelpdeskId = @helpdeskId
+            ORDER BY Timestamp;
+        ";
+        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            messages.Add(new ChatMessage
+            {
+                Role = reader.GetString(0),
+                Content = reader.GetString(1)
+            });
+        }
+
+        return messages;
+    }
+
+    public async Task SaveMessageAsync(string helpdeskId, ChatMessage message)
     {
         using var connection = new SqliteConnection(_SqLiteConnectionString);
         await connection.OpenAsync();
 
         var command = connection.CreateCommand();
         command.CommandText = @"
-                INSERT INTO ChatHistory (UserMessage, AssistantResponse)
-                VALUES (@userMessage, @assistantResponse);
-            ";
-        command.Parameters.AddWithValue("@userMessage", userMessage);
-        command.Parameters.AddWithValue("@assistantResponse", assistantResponse);
+            INSERT INTO ChatHistory (HelpdeskId, Role, Content)
+            VALUES (@helpdeskId, @role, @content);
+        ";
+        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
+        command.Parameters.AddWithValue("@role", message.Role);
+        command.Parameters.AddWithValue("@content", message.Content);
 
         await command.ExecuteNonQueryAsync();
-    }
-
-    public async Task<List<(string UserMessage, string AssistantResponse, DateTime Timestamp)>> GetHistoryAsync()
-    {
-        var history = new List<(string UserMessage, string AssistantResponse, DateTime Timestamp)>();
-
-        using var connection = new SqliteConnection(_SqLiteConnectionString);
-        await connection.OpenAsync();
-
-        var command = connection.CreateCommand();
-        command.CommandText = "SELECT UserMessage, AssistantResponse, Timestamp FROM ChatHistory ORDER BY Timestamp";
-
-        using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            history.Add((
-                reader.GetString(0),
-                reader.GetString(1),
-                reader.GetDateTime(2)
-            ));
-        }
-
-        return history;
     }
 }

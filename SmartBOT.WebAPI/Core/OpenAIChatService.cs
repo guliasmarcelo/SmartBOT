@@ -14,17 +14,12 @@ public class OpenAIChatService : IChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly string? _SqLiteConnectionString; // Caminho do banco SQLite
+    private readonly IChatHistoryRepository _chatHistoryRepository;
     private readonly string? _apiKey;
 
-    public OpenAIChatService(IConfiguration configuration)
+    public OpenAIChatService(IConfiguration configuration, IChatHistoryRepository chatHistoryRepository)
     {
-        _SqLiteConnectionString = configuration["ConnectionStrings:SqLiteConnectionString"];
-        if (string.IsNullOrEmpty(_SqLiteConnectionString))
-        {
-            throw new Exception("SqLiteConnectionString not found in configuration.");
-        }
-
+        _chatHistoryRepository = chatHistoryRepository;
 
         _apiKey = configuration["OpenAI:ApiKey"];
         if (string.IsNullOrEmpty(_apiKey))
@@ -43,116 +38,49 @@ public class OpenAIChatService : IChatService
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true
         };
-
-        _SqLiteConnectionString = $"Data Source={_SqLiteConnectionString}";
-        InitializeDatabase();
-    }
-
-    private void InitializeDatabase()
-    {
-        using var connection = new SqliteConnection(_SqLiteConnectionString);
-        connection.Open();
-
-        var command = connection.CreateCommand();
-        command.CommandText = @"
-            CREATE TABLE IF NOT EXISTS ChatHistory (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                HelpdeskId TEXT NOT NULL,
-                Role TEXT NOT NULL,
-                Content TEXT NOT NULL,
-                Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-        ";
-        command.ExecuteNonQuery();
     }
 
     public async Task<List<ChatMessage>> LoadChatHistoryAsync(string helpdeskId)
     {
-        var messages = new List<ChatMessage>();
-
-        using var connection = new SqliteConnection(_SqLiteConnectionString);
-        await connection.OpenAsync();
-
-        var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT Role, Content
-            FROM ChatHistory
-            WHERE HelpdeskId = @helpdeskId
-            ORDER BY Timestamp;
-        ";
-        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
-
-        using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            messages.Add(new ChatMessage
-            {
-                Role = reader.GetString(0),
-                Content = reader.GetString(1)
-            });
-        }
-
-        return messages;
-    }
-
-    private async Task SaveMessageAsync(string helpdeskId, ChatMessage message)
-    {
-        using var connection = new SqliteConnection(_SqLiteConnectionString);
-        await connection.OpenAsync();
-
-        var command = connection.CreateCommand();
-        command.CommandText = @"
-            INSERT INTO ChatHistory (HelpdeskId, Role, Content)
-            VALUES (@helpdeskId, @role, @content);
-        ";
-        command.Parameters.AddWithValue("@helpdeskId", helpdeskId);
-        command.Parameters.AddWithValue("@role", message.Role);
-        command.Parameters.AddWithValue("@content", message.Content);
-
-        await command.ExecuteNonQueryAsync();
+        return await _chatHistoryRepository.LoadChatHistoryAsync(helpdeskId);
     }
 
     public async Task<string> SendUserMessageAsync(
-     string helpdeskId,
-     List<ChatMessage> messages,
-     string userMessage,
-     string knowledgeBase,
-     string model,
-     string systemMessage)
+        string helpdeskId,
+        List<ChatMessage> messages,
+        string userMessage,
+        string knowledgeBase,
+        string model,
+        string systemMessage)
     {
         // Adicionar a mensagem de sistema na primeira interação
         if (!messages.Any())
         {
-            messages.Add(new ChatMessage
+            var systemMessageObj = new ChatMessage
             {
                 Role = "system",
                 Content = systemMessage
-            });
-
-            // Salvar a mensagem de sistema no histórico
-            await SaveMessageAsync(helpdeskId, new ChatMessage
-            {
-                Role = "system",
-                Content = systemMessage
-            });
+            };
+            messages.Add(systemMessageObj);
+            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, systemMessageObj);
         }
 
         // Adicionar FAQ como mensagem do sistema, se fornecida
         if (!string.IsNullOrWhiteSpace(knowledgeBase))
         {
-            var knolodgeMessmessage = new ChatMessage
+            var knowledgeMessage = new ChatMessage
             {
                 Role = "system",
                 Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
             };
-            messages.Add(knolodgeMessmessage);
-            await SaveMessageAsync(helpdeskId, knolodgeMessmessage);
+            messages.Add(knowledgeMessage);
+            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, knowledgeMessage);
         }
 
         // Adicionar mensagem do usuário
         var userMessageObj = new ChatMessage { Role = "user", Content = userMessage };
         messages.Add(userMessageObj);
-        await SaveMessageAsync(helpdeskId, userMessageObj);
+        await _chatHistoryRepository.SaveMessageAsync(helpdeskId, userMessageObj);
 
         // Preparar requisição para OpenAI
         var requestBody = new
@@ -184,10 +112,10 @@ public class OpenAIChatService : IChatService
         {
             var assistantMessageObj = new ChatMessage { Role = "assistant", Content = assistantMessage };
             messages.Add(assistantMessageObj);
-            await SaveMessageAsync(helpdeskId, assistantMessageObj);
+            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, assistantMessageObj);
         }
 
         return assistantMessage ?? throw new Exception("Error when trying to answer the question!");
     }
-
 }
+
