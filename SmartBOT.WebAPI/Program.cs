@@ -10,7 +10,7 @@ builder.Services.AddSingleton<IChatService, OpenAIChatService>();
 builder.Services.AddSingleton<IEmbeddingsService, OpenAIEmbeddingsService>();
 builder.Services.AddSingleton<IVectorSearchService, AzureVectorSearchService>();
 builder.Services.AddSingleton<IChatHistoryRepository, SqLiteChatHistoryRepository>();
-builder.Services.AddSingleton<TeslaHelpDeskService>();
+builder.Services.AddSingleton<IHelpDeskService, TeslaHelpDeskService>();
 
 
 var app = builder.Build();

@@ -8,11 +8,11 @@ namespace SmartBOT.WebAPI.Controllers;
 [Route("api/chat")]
 public class ChatController : ControllerBase
 {
-    private readonly TeslaHelpDeskService _integrationService;
+    private readonly IHelpDeskService _helpDeskService;
 
-    public ChatController(TeslaHelpDeskService integrationService)
+    public ChatController(IHelpDeskService integrationService)
     {
-        _integrationService = integrationService;
+        _helpDeskService = integrationService;
     }
 
     [HttpPost("{helpdeskId}")]
@@ -20,7 +20,7 @@ public class ChatController : ControllerBase
     {
         try
         {
-            var response = await _integrationService.HandleUserQueryAsync(helpdeskId, request.UserMessage);
+            var response = await _helpDeskService.HandleUserQueryAsync(helpdeskId, request.UserMessage);
             return Ok(new { Response = response });
         }
         catch (Exception ex)
