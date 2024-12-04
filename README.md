@@ -26,14 +26,6 @@ Before you start, make sure you have the following installed in your environment
 
 
 
-## Configuration
-
-
-
-
----
-
-
 ## **Project Setup**
 
 ### 1. Clone the Repository
@@ -124,14 +116,14 @@ How to access the SQLite database?
 The chat_history.db database file will be created in the WebAPI directory.
 SmartBOT/SmartBOT.WebAPI/chat_history.db
 
----
+
 
 ## Folder Structure
    - SmartBOT/: Solution Folder 
    - SmartBOT.WebAPI/: Contains the WebAPI application.
    - SmartBOT.ConsoleApp/: Contains the console application.
    
----
+
 
 
     
