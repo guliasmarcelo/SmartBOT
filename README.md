@@ -128,8 +128,8 @@ SmartBOT/SmartBOT.WebAPI/chat_history.db
 
     
 ## Contato
-Caso tenha dúvidas ou precise de suporte, entre em contato:
-   - E-mail: seu.email@exemplo.com
+If you have any questions or need support, please contact:
+   - E-mail: guliasmarcelo@gmail.com
 
 
 
