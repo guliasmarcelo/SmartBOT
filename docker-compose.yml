@@ -8,6 +8,8 @@ services:
       - "5053:5053"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+    networks:
+      - smartbot-network
 
   consoleapp:
     build:
@@ -15,3 +17,9 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - webapi
+    networks:
+      - smartbot-network
+
+networks:
+  smartbot-network:
+    driver: bridge
