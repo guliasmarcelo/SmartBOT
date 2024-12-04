@@ -122,6 +122,7 @@ SmartBOT/SmartBOT.WebAPI/chat_history.db
 
 
 
+
 ## Folder Structure
    - SmartBOT/: Solution Folder 
    - SmartBOT.WebAPI/: Contains the WebAPI application.
