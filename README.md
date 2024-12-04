@@ -1,7 +1,8 @@
-# SmartBOT 
+ï»¿# SmartBOT 
 
-SmartBOT is an innovative bot that simulates a Tesla helpdesk and provides answers to questions about Tesla Motors.
+SmartBOT is an innovative bot designed to simulate a Tesla helpdesk. It provides answers to questions about Tesla Motors and its products using OpenAI and Azure AI Search APIs.
 
+---
 
 ## Overview
 
@@ -9,32 +10,35 @@ SmartBOT is a solution that includes:
 1. A Web API for managing the bot logic and communication with external services.
 2. A Console Application to interact with the bot.
 
-This guide provides a step-by-step guide to set up and run the project.
+---
 
+## **Instructions to Run the Code**
 
-## Prerequisites
+### **1. Prerequisites**
 
-Before you start, make sure you have the following installed in your environment:
+Ensure the following are installed in your environment:
 
-1. **.NET SDK 9**: [Download](https://dotnet.microsoft.com/download/dotnet/9.0)
-2. **Editor de Código/IDE** (opcional):
-   - Visual Studio (recomendado)
+1. **.NET SDK 9**: [Download Here](https://dotnet.microsoft.com/download/dotnet/9.0)
+2. **Code Editor/IDE** (Optional):
+   - Visual Studio (recommended)
    - Visual Studio Code
    - Rider
-3. **Banco de Dados**:
-   - O projeto utiliza SQLite, que não requer instalação adicional. O arquivo do banco será criado automaticamente ao executar a WebAPI.
+3. **Database**:
+   - The project uses SQLite. No additional installation is required. The database file will be created automatically upon running the WebAPI.
+
+---
 
 
+### **2. Setup**
 
-## **Project Setup**
-
-### 1. Clone the Repository
+#### Clone the Repository
 ```bash
 git clone https://github.com/your-username/smartbot.git
 cd smartbot
 ```
-### 2. Configure the API Keys
-Before running the solution, ensure that the API keys and connection strings are properly set in the appsettings.json file located in the SmartBOT.WebAPI folder.
+
+#### Configure the API Keys
+Edit the appsettings.json file in the SmartBOT.WebAPI directory to include your API keys:
 
 ```json
 {
@@ -60,30 +64,86 @@ Before running the solution, ensure that the API keys and connection strings are
 ```
 Replace **\<Your OpenAI API Key\>** and **\<Your Azure AI Search API Key\>** with your respective API keys.
 
-### 3. Navigate to the WebAPI folder:
+
+
+### **3. Running the Project**
+
+#### 1. Run the WebAPI:
 ```bash
 cd SmartBOT.WebAPI
-```
-
-### 4. Navigate to the WebAPI folder:
-```bash
 dotnet run
 ```
+The WebAPI will start at http://localhost:5053.
 
-### 5. The API will start. You can access Swagger at:
+
+#### 2. Access Swagger. Visit:
 ```bash
 http://localhost:5053/swagger
+
 ```
 
-### 6. Open a new terminal and navigate to the Console App folder:
+
+#### 3. Run the Console App: Open a new terminal, navigate to the ConsoleApp directory, and run::
 ```bash
 cd SmartBOT.ConsoleApp
+dotnet run
+
 ```
 
-### 7. Run the project:
-```bash
-dotnet run
+### **2. Main Technical Decisions**
+1. SQLite for Persistence:
+    - Chosen for simplicity and portability.
+    - Requires no additional setup or installation.
+    - Automatically creates the chat_history.db file on first run.
+      
+2. Stateless WebAPI:
+    - The WebAPI is stateless, ensuring scalability and making it suitable for a cloud environment.
+
+
+3. Service-Oriented Architecture:
+    - Clean separation between Chat, Embedding, and Vector Search services.
+    - Dependency injection is used to manage service lifetimes efficiently.
+
+  
+### **4. Testing the API**
+
+#### Available Endpoints
+1. Send a Message
+    - Endpoint: POST /api/chat/{helpdeskId}
+    - Description: Sends a user message to the assistant and retrieves a response.
+    - Sample Payload:
+```json
+{
+  "userMessage": "What are the available Tesla car models?"
+}
 ```
+
+2. Retrieve Chat History
+    - Endpoint: GET /api/chat/history/{helpdeskId}
+    - Description: Retrieves the chat history for a specific helpdeskId.
+
+#### Testing with curl
+1. Send a Message:
+
+```bash
+curl -X POST http://localhost:5053/api/chat/{helpdeskId} \
+-H "Content-Type: application/json" \
+-d '{"userMessage": "How does Tesla Autopilot work?"}'
+```
+
+
+### **4. Folder Structure**
+SmartBOT/
+â”œâ”€â”€ SmartBOT.WebAPI/         # WebAPI implementation
+â”œâ”€â”€ SmartBOT.ConsoleApp/     # Console application
+â”œâ”€â”€ README.md                # Project documentation
+â””â”€â”€ SmartBOT.WebAPI/chat_history.db          # SQLite database file (auto-created)
+
+
+
+
+
+
 
 ### 7.Interact with the virtual assistant SmartBOT:
 ```bash
@@ -92,55 +152,11 @@ dotnet run
 
 
 
-## Testando a API
-
-### Endpoints Disponíveis
-1. Enviar Mensagem para o Assistente
-   - POST /api/chat/{helpdeskId}
-   - Envia uma mensagem para o assistente e retorna a resposta.
-2. Obter Histórico da Conversa
-   - GET /api/chat/history/{helpdeskId}
-   - Retorna o histórico de mensagens associado ao helpdeskId.
-
-
-### Available Endpoints
-1. Send Message to the Assistant
-   - POST /api/chat/{helpdeskId}
-   - Sends a message to the assistant and returns the response.
-
-
-## Testing Using curl
-1. Send a Message:
-```bash
-curl -X 'POST' \
-  'http://localhost:5053/api/chat/123456' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "userMessage": "how many cars Tesla has?"
-}'
-
-```
-How to access the SQLite database?
-
-The chat_history.db database file will be created in the WebAPI directory.
-SmartBOT/SmartBOT.WebAPI/chat_history.db
-
-
-
-
-## Folder Structure
-   - SmartBOT/: Solution Folder 
-   - SmartBOT.WebAPI/: Contains the WebAPI application.
-   - SmartBOT.ConsoleApp/: Contains the console application.
-   
-
-
-
     
 ## Contato
-If you have any questions or need support, please contact:
-   - E-mail: guliasmarcelo@gmail.com
+For questions or support:
+    - Email: guliasmarcelo@gmail.com
+    
 
 
 
