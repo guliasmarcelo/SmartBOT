@@ -9,22 +9,30 @@ public class OpenAIEmbeddingsService : IEmbeddingsService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly string? _apiKey;
+    private readonly string? _OpenAIapiKey;
+    private readonly string? _OpenAIBaseAddress;
 
     public OpenAIEmbeddingsService(IConfiguration configuration)
     {
-        _apiKey = configuration["OpenAI:ApiKey"];
-        if (string.IsNullOrEmpty(_apiKey))
+        _OpenAIapiKey = configuration["OpenAI:ApiKey"];
+        if (string.IsNullOrEmpty(_OpenAIapiKey))
         {
             throw new Exception("OpenAI API Key not found in configuration.");
         }
 
+        _OpenAIBaseAddress = configuration["OpenAI:BaseAddress"];
+        if (string.IsNullOrEmpty(_OpenAIBaseAddress))
+        {
+            throw new Exception("OpenAI BaseAddress not found in configuration.");
+        }
+
+
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://api.openai.com/v1/")
+            BaseAddress = new Uri(_OpenAIBaseAddress)
         };
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _OpenAIapiKey);
 
         // Configuração para JSON em formato camelCase, esperado pela OpenAI
         _jsonOptions = new JsonSerializerOptions

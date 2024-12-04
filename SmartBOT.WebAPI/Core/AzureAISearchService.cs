@@ -9,27 +9,34 @@ namespace SmartBOT.WebAPI.Core;
 /// <summary>
 /// Classe responsável por trazer a base de conhecimento através de uma busca vetorial
 /// </summary>
-public class AzureVectorDbSearchService : IVectorDbSearchService
+public class AzureAISearchService : IVectorDbSearchService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly string? _apiKey;
+    private readonly string? _azureApiKey;
+    private readonly string? _azureBaseAddress;
 
-    public AzureVectorDbSearchService(IConfiguration configuration)
+    public AzureAISearchService(IConfiguration configuration)
     {
-        _apiKey = configuration["AzureAISearch:ApiKey"];
-        if (string.IsNullOrEmpty(_apiKey))
+        _azureApiKey = configuration["AzureAISearch:ApiKey"];
+        if (string.IsNullOrEmpty(_azureApiKey))
         {
             throw new Exception("Azure API Key not found in configuration.");
         }
 
+        _azureBaseAddress = configuration["AzureAISearch:BaseAddress"];
+        if (string.IsNullOrEmpty(_azureBaseAddress))
+        {
+            throw new Exception("Azure Base Address not found in configuration.");
+        }
+
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://claudia-db.search.windows.net/")
+            BaseAddress = new Uri(_azureBaseAddress)
         };
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-        _httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _azureApiKey);
+        _httpClient.DefaultRequestHeaders.Add("api-key", _azureApiKey);
 
         _jsonOptions = new JsonSerializerOptions
         {

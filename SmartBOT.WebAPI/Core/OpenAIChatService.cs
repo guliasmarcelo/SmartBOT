@@ -15,23 +15,31 @@ public class OpenAIChatService : IChatService
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly IChatHistoryRepository _chatHistoryRepository;
-    private readonly string? _apiKey;
+    private readonly string? _OpenAIApiKey;
+    private readonly string? _OpenAIBaseAddress;
 
     public OpenAIChatService(IConfiguration configuration, IChatHistoryRepository chatHistoryRepository)
     {
         _chatHistoryRepository = chatHistoryRepository;
 
-        _apiKey = configuration["OpenAI:ApiKey"];
-        if (string.IsNullOrEmpty(_apiKey))
+        _OpenAIApiKey = configuration["OpenAI:ApiKey"];
+        if (string.IsNullOrEmpty(_OpenAIApiKey))
         {
             throw new Exception("OpenAI API Key not found in configuration.");
         }
 
+        _OpenAIBaseAddress = configuration["OpenAI:BaseAddress"];
+        if (string.IsNullOrEmpty(_OpenAIBaseAddress))
+        {
+            throw new Exception("OpenAI BaseAddress not found in configuration.");
+        }
+
+
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://api.openai.com/v1/")
+            BaseAddress = new Uri(_OpenAIBaseAddress)
         };
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _OpenAIApiKey);
 
         _jsonOptions = new JsonSerializerOptions
         {
