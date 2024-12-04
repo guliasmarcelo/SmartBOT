@@ -1,4 +1,7 @@
-# SmartBOT Solution
+# SmartBOT 
+
+SmartBOT is an innovative bot that simulates a Tesla helpdesk and provides answers to questions about Tesla Motors.
+
 
 ## Overview
 
@@ -6,22 +9,22 @@ SmartBOT is a solution that includes:
 1. A Web API for managing the bot logic and communication with external services.
 2. A Console Application to interact with the bot.
 
-This guide provides a step-by-step guide to set up and run the project using Docker.
+This guide provides a step-by-step guide to set up and run the project.
 
 ---
 
 ## Prerequisites
 
 
-Antes de comeÁar, certifique-se de ter os seguintes itens instalados no seu ambiente:
+Antes de come√ßar, certifique-se de ter os seguintes itens instalados no seu ambiente:
 
 1. **.NET SDK 9**: [Download](https://dotnet.microsoft.com/download/dotnet/9.0)
-2. **Editor de CÛdigo/IDE** (opcional):
+2. **Editor de C√≥digo/IDE** (opcional):
    - Visual Studio (recomendado)
    - Visual Studio Code
    - Rider
 3. **Banco de Dados**:
-   - O projeto utiliza SQLite, que n„o requer instalaÁ„o adicional. O arquivo do banco ser· criado automaticamente ao executar a WebAPI.
+   - O projeto utiliza SQLite, que n√£o requer instala√ß√£o adicional. O arquivo do banco ser√° criado automaticamente ao executar a WebAPI.
 
 ---
 
@@ -29,7 +32,7 @@ Antes de comeÁar, certifique-se de ter os seguintes itens instalados no seu ambi
 
 Before running the solution, ensure that the API keys and connection strings are set correctly in the `appsettings.json` file under the `SmartBOT.WebAPI` folder.
 
-\```json
+```json
 {
   "OpenAI": {
     "ApiKey": "<Your OpenAI API Key>",
@@ -50,6 +53,8 @@ Before running the solution, ensure that the API keys and connection strings are
   },
   "AllowedHosts": "*"
 }
+```
+Replace \<Your OpenAI API Key \> and \<Your Azure AI Search API Key \> with your respective API keys.
 
 
 ---
@@ -64,4 +69,9 @@ Clone the repository to your local machine:
 ```bash
 git clone https://github.com/your-username/smartbot.git
 cd smartbot
+```
+
+## Running the Project
+### **1. Clone the Repository**
+
 
