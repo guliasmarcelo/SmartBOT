@@ -9,7 +9,7 @@ SmartBOT is an innovative bot designed to simulate a Tesla helpdesk. It provides
 SmartBOT is a solution that includes:
 1. A Web API for managing the bot logic and communication with external services.
 2. A Console Application to interact with the bot.
-
+    
 ---
 
 ## **Instructions to Run the Code**
