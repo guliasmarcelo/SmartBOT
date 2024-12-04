@@ -53,8 +53,7 @@ Before running the solution, ensure that the API keys and connection strings are
 
 ---
 
-
-1. Navegue até a pasta da WebAPI:
-   ```bash
-   cd SmartBOT.WebAPI
+```bash
+git clone https://github.com/your-username/smartbot.git
+cd smartbot
 
