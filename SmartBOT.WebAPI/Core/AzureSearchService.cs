@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,15 +10,18 @@ namespace SmartBOT.WebAPI.Core;
 /// <summary>
 /// Classe responsável por trazer a base de conhecimento através de uma busca vetorial
 /// </summary>
-public class AzureVectorSearchService : IVectorSearchService
+public class AzureSearchService : ISearchService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly string _azureApiKey;
 
-    public AzureVectorSearchService()
+    public AzureSearchService()
     {
         _azureApiKey = "RG3f9GfswPkkxYKKPRX3wqObtBpdvlwQ9etiv1rX7TAzSeC677ln";
+        //_azureApiKey = azureSearchOptions.Value.ApiKey;
+
+
 
         _httpClient = new HttpClient
         {
@@ -70,3 +74,19 @@ public class AzureVectorSearchService : IVectorSearchService
     }
 }
 
+public class SearchResponse
+{
+    public List<SearchResult> Value { get; set; }
+}
+
+public class SearchResult
+{
+    [JsonPropertyName("content")]
+    public string Content { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; }
+
+    [JsonPropertyName("@search.score")]
+    public float Score { get; set; }
+}
