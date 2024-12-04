@@ -77,9 +77,11 @@ dotnet run
 ```
 
 ### 4. A API será iniciada. Você pode acessar o Swagger 
-```http
+```bash
 http://localhost:5053/swagger
 ```
+
+
 
 
 
