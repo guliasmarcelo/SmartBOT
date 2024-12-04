@@ -106,9 +106,13 @@ dotnet run
 ## Testing Using curl
 1. Send a Message:
 ```bash
-curl -X POST http://localhost:5053/api/chat/{helpdeskId} \
--H "Content-Type: application/json" \
--d '{"message": "What is the price of Tesla Model S?"}'
+curl -X 'POST' \
+  'http://localhost:5053/api/chat/123456' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userMessage": "quanto tempo de garantia a bateria tem?"
+}'
 
 ```
 How to access the SQLite database?
