@@ -9,7 +9,7 @@ public class TeslaHelpDeskService : IHelpDeskService
 {
     private readonly OpenAIChatService _chatService;
     private readonly OpenAIEmbeddingsService _embeddingsService;
-    private readonly AzureVectorSearchService _searchService;
+    private readonly AzureVectorDbSearchService _searchService;
 
     // Mensagem de sistema para configurar o comportamento do agente
     private const string SystemMessage = @"  
@@ -23,7 +23,7 @@ If the user asks about anything unrelated to Tesla Motors or its products, polit
         // Inicializar os serviços
         _chatService = new OpenAIChatService();
         _embeddingsService = new OpenAIEmbeddingsService();
-        _searchService = new AzureVectorSearchService();
+        _searchService = new AzureVectorDbSearchService();
     }
 
     /// <summary>

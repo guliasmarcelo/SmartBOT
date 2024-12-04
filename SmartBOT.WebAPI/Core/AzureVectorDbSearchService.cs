@@ -9,13 +9,13 @@ namespace SmartBOT.WebAPI.Core;
 /// <summary>
 /// Classe responsável por trazer a base de conhecimento através de uma busca vetorial
 /// </summary>
-public class AzureVectorSearchService : IVectorSearchService
+public class AzureVectorDbSearchService : IVectorDbSearchService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly string _azureApiKey;
 
-    public AzureVectorSearchService()
+    public AzureVectorDbSearchService()
     {
         _azureApiKey = "RG3f9GfswPkkxYKKPRX3wqObtBpdvlwQ9etiv1rX7TAzSeC677ln";
 
