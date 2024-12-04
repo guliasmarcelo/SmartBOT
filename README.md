@@ -88,6 +88,11 @@ cd SmartBOT.ConsoleApp
 dotnet run
 ```
 
+### 7.Interaja com o assistente virtual SmartBOT.
+```bash
+dotnet run
+```
+
 
 
 
