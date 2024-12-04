@@ -51,6 +51,7 @@ Before running the solution, ensure that the API keys and connection strings are
   "AllowedHosts": "*"
 }
 
+
 ---
 
 
@@ -60,7 +61,7 @@ Before running the solution, ensure that the API keys and connection strings are
 
 Clone the repository to your local machine:
 
-\```bash
+```bash
 git clone https://github.com/your-username/smartbot.git
 cd smartbot
 
