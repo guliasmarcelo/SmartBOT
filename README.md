@@ -100,9 +100,9 @@ dotnet run
 
 
 
-##Testando a API
+## Testando a API
 
-###Endpoints Disponíveis
+### Endpoints Disponíveis
 1. Enviar Mensagem para o Assistente
    - POST /api/chat/{helpdeskId}
    - Envia uma mensagem para o assistente e retorna a resposta.
