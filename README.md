@@ -110,14 +110,34 @@ dotnet run
    - GET /api/chat/history/{helpdeskId}
    - Retorna o histórico de mensagens associado ao helpdeskId.
 
-## Exemplo de Teste com curl
-Enviar Mensagem:
+
+## Testing Using curl
+1. Send a Message:
 ```bash
 curl -X POST http://localhost:5053/api/chat/{helpdeskId} \
 -H "Content-Type: application/json" \
 -d '{"message": "What is the price of Tesla Model S?"}'
 
 ```
+How to access the SQLite database?
+
+The chat_history.db database file will be created in the WebAPI directory.
+SmartBOT/SmartBOT.WebAPI/chat_history.db
+
+---
+
+## Folder Structure
+   - SmartBOT/: Solution Folder 
+   - SmartBOT.WebAPI/: Contains the WebAPI application.
+   - SmartBOT.ConsoleApp/: Contains the console application.
+   
+---
+
+
+    
+## Contato
+Caso tenha dúvidas ou precise de suporte, entre em contato:
+   - E-mail: seu.email@exemplo.com
 
 
 
