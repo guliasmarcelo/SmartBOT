@@ -3,11 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBOT", "SmartBOT\SmartBOT.csproj", "{12D72778-5BE5-4002-82C8-AFD62B69A636}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBOT.WebAPI", "SmartBOT.WebAPI\SmartBOT.WebAPI.csproj", "{926E9D5C-C10D-4E81-A9A3-758E92E13FAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBOT.ConsoleApp", "SmartBOT.ConsoleApp\SmartBOT.ConsoleApp.csproj", "{3FC44F0F-D651-475A-B814-0BC02593EEF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{49EB9C50-0F5C-47C6-9A6F-F0230284D416}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +18,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{12D72778-5BE5-4002-82C8-AFD62B69A636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12D72778-5BE5-4002-82C8-AFD62B69A636}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12D72778-5BE5-4002-82C8-AFD62B69A636}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12D72778-5BE5-4002-82C8-AFD62B69A636}.Release|Any CPU.Build.0 = Release|Any CPU
 		{926E9D5C-C10D-4E81-A9A3-758E92E13FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{926E9D5C-C10D-4E81-A9A3-758E92E13FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{926E9D5C-C10D-4E81-A9A3-758E92E13FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU

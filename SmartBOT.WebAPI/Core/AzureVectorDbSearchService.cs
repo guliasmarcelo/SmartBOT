@@ -13,19 +13,23 @@ public class AzureVectorDbSearchService : IVectorDbSearchService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly string _azureApiKey;
+    private readonly string? _apiKey;
 
-    public AzureVectorDbSearchService()
+    public AzureVectorDbSearchService(IConfiguration configuration)
     {
-        _azureApiKey = "RG3f9GfswPkkxYKKPRX3wqObtBpdvlwQ9etiv1rX7TAzSeC677ln";
+        _apiKey = configuration["AzureAISearch:ApiKey"];
+        if (string.IsNullOrEmpty(_apiKey))
+        {
+            throw new Exception("Azure API Key not found in configuration.");
+        }
 
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://claudia-db.search.windows.net/")
         };
 
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _azureApiKey);
-        _httpClient.DefaultRequestHeaders.Add("api-key", _azureApiKey);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
 
         _jsonOptions = new JsonSerializerOptions
         {

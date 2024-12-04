@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 
+
 namespace SmartBOT;
 
 /// <summary>
@@ -14,10 +15,17 @@ public class OpenAIChatService
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly string _connectionString; // Caminho do banco SQLite
+    private readonly string _apiKey;
 
-    public OpenAIChatService(string databasePath = "chat_history.db")
+    public OpenAIChatService(IConfiguration configuration)
     {
-        var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
+        string databasePath = "chat_history.db";
+
+        _apiKey = configuration["OpenAI:ApiKey"];
+        if (string.IsNullOrEmpty(_apiKey))
+        {
+            throw new Exception("OpenAI API Key not found in configuration.");
+        }
 
         _httpClient = new HttpClient
         {

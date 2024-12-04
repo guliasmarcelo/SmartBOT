@@ -5,17 +5,22 @@ namespace SmartBOT.WebAPI.Core;
 
 public class SqLiteChatHistoryRepository : IChatHistoryRepository
 {
-    private readonly string _connectionString;
+    private readonly string? _SqLiteConnectionString;
 
-    public SqLiteChatHistoryRepository(string databasePath = "chat_history.db")
+    public SqLiteChatHistoryRepository(IConfiguration configuration)
     {
-        _connectionString = $"Data Source={databasePath}";
+        _SqLiteConnectionString = configuration["ConnectionStrings:SqLiteConnectionString"];
+        if (string.IsNullOrEmpty(_SqLiteConnectionString))
+        {
+            throw new Exception("SqLiteConnectionString not found in configuration.");
+        }
+        
         InitializeDatabase();
     }
 
     private void InitializeDatabase()
     {
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -32,7 +37,7 @@ public class SqLiteChatHistoryRepository : IChatHistoryRepository
 
     public async Task SaveMessageAsync(string userMessage, string assistantResponse)
     {
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         await connection.OpenAsync();
 
         var command = connection.CreateCommand();
@@ -50,7 +55,7 @@ public class SqLiteChatHistoryRepository : IChatHistoryRepository
     {
         var history = new List<(string UserMessage, string AssistantResponse, DateTime Timestamp)>();
 
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         await connection.OpenAsync();
 
         var command = connection.CreateCommand();

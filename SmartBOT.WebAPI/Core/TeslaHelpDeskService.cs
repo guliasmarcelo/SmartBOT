@@ -7,9 +7,9 @@ namespace SmartBOT.WebAPI.Core;
 /// </summary>
 public class TeslaHelpDeskService : IHelpDeskService
 {
-    private readonly OpenAIChatService _chatService;
-    private readonly OpenAIEmbeddingsService _embeddingsService;
-    private readonly AzureVectorDbSearchService _searchService;
+    private readonly IChatService _chatService;
+    private readonly IEmbeddingsService _embeddingsService;
+    private readonly IVectorDbSearchService _vectorDbSearchService;
 
     // Mensagem de sistema para configurar o comportamento do agente
     private const string SystemMessage = @"  
@@ -18,12 +18,12 @@ Your responses must be concise, using simple language, and limited to no more th
 If the user asks about anything unrelated to Tesla Motors or its products, politely inform them that you can only provide information about Tesla Motors.
     ";
 
-    public TeslaHelpDeskService()
+    public TeslaHelpDeskService(IChatService chatService, IEmbeddingsService embeddingsService, IVectorDbSearchService vectorDbSearchService)
     {
         // Inicializar os serviços
-        _chatService = new OpenAIChatService();
-        _embeddingsService = new OpenAIEmbeddingsService();
-        _searchService = new AzureVectorDbSearchService();
+        _chatService = chatService;
+        _embeddingsService = embeddingsService;
+        _vectorDbSearchService = vectorDbSearchService;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ If the user asks about anything unrelated to Tesla Motors or its products, polit
         var embeddedQuestion = await _embeddingsService.GetEmbeddingAsync(userMessage);
 
         // Realizar busca vetorial na base de conhecimento
-        var searchResults = await _searchService.SearchAsync(embeddedQuestion, "tesla_motors", 10, 3);
+        var searchResults = await _vectorDbSearchService.SearchAsync(embeddedQuestion, "tesla_motors", 10, 3);
 
         // Validar resultados da busca
         if (!searchResults.Any())

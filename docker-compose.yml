@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  webapi:
+    build:
+      context: ./SmartBOT.WebAPI
+      dockerfile: Dockerfile
+    ports:
+      - "5053:5053"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+
+  consoleapp:
+    build:
+      context: ./SmartBOT.ConsoleApp
+      dockerfile: Dockerfile
+    depends_on:
+      - webapi

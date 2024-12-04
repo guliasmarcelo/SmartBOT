@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
-
+using Microsoft.Extensions.Configuration;
 
 namespace SmartBOT.WebAPI.Core;
 
@@ -14,17 +14,29 @@ public class OpenAIChatService : IChatService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
-    private readonly string _connectionString; // Caminho do banco SQLite
+    private readonly string? _SqLiteConnectionString; // Caminho do banco SQLite
+    private readonly string? _apiKey;
 
-    public OpenAIChatService(string databasePath = "chat_history.db")
+    public OpenAIChatService(IConfiguration configuration)
     {
-        var apiKey = "sk-svcacct-Dz-PhIMoOCoACwP9h_4ouXR9_lWUu_Ku4zrC9x5rmblELtMX9yjJ8dPJe3nBG136NVigT3BlbkFJkZKpyjD_rstXNAF3LbNlNvtQpLfflJktmFWsfas8Ige0ZDd1Zcaf2k6TsoE9Ud6tTV4A";
+        _SqLiteConnectionString = configuration["ConnectionStrings:SqLiteConnectionString"];
+        if (string.IsNullOrEmpty(_SqLiteConnectionString))
+        {
+            throw new Exception("SqLiteConnectionString not found in configuration.");
+        }
+
+
+        _apiKey = configuration["OpenAI:ApiKey"];
+        if (string.IsNullOrEmpty(_apiKey))
+        {
+            throw new Exception("OpenAI API Key not found in configuration.");
+        }
 
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.openai.com/v1/")
         };
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
         _jsonOptions = new JsonSerializerOptions
         {
@@ -32,13 +44,13 @@ public class OpenAIChatService : IChatService
             WriteIndented = true
         };
 
-        _connectionString = $"Data Source={databasePath}";
+        _SqLiteConnectionString = $"Data Source={_SqLiteConnectionString}";
         InitializeDatabase();
     }
 
     private void InitializeDatabase()
     {
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         connection.Open();
 
         var command = connection.CreateCommand();
@@ -58,7 +70,7 @@ public class OpenAIChatService : IChatService
     {
         var messages = new List<ChatMessage>();
 
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         await connection.OpenAsync();
 
         var command = connection.CreateCommand();
@@ -85,7 +97,7 @@ public class OpenAIChatService : IChatService
 
     private async Task SaveMessageAsync(string helpdeskId, ChatMessage message)
     {
-        using var connection = new SqliteConnection(_connectionString);
+        using var connection = new SqliteConnection(_SqLiteConnectionString);
         await connection.OpenAsync();
 
         var command = connection.CreateCommand();
