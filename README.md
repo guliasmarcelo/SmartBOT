@@ -100,6 +100,16 @@ dotnet run
 
 
 
+##Testando a API
+
+###Endpoints Disponíveis
+1. Enviar Mensagem para o Assistente
+   - POST /api/chat/{helpdeskId}
+   - Envia uma mensagem para o assistente e retorna a resposta.
+2. Obter Histórico da Conversa
+   - GET /api/chat/history/{helpdeskId}
+   - Retorna o histórico de mensagens associado ao helpdeskId.
+
 
 
 
