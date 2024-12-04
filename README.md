@@ -103,6 +103,12 @@ dotnet run
    - Retorna o histórico de mensagens associado ao helpdeskId.
 
 
+### Available Endpoints
+1. Send Message to the Assistant
+   - POST /api/chat/{helpdeskId}
+   - Sends a message to the assistant and returns the response.
+
+
 ## Testing Using curl
 1. Send a Message:
 ```bash
@@ -111,7 +117,7 @@ curl -X 'POST' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "userMessage": "quanto tempo de garantia a bateria tem?"
+  "userMessage": "how many cars Tesla has?"
 }'
 
 ```
