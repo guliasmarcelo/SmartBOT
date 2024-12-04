@@ -13,7 +13,7 @@ This guide provides a step-by-step guide to set up and run the project using Doc
 ## Prerequisites
 
 1. **Docker**: Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for your platform.
-2. **Docker Compose**: Ensure Docker Compose is included with your Docker installation.
+
 
 ---
 
