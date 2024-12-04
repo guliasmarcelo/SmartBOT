@@ -6,10 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Adicionar serviços
 builder.Services.AddControllers();
-builder.Services.AddSingleton<OpenAIChatService>();
-builder.Services.AddSingleton<OpenAIEmbeddingsService>();
-builder.Services.AddSingleton<AzureVectorSearchService>();
-builder.Services.AddSingleton<SqLiteChatHistoryRepository>();
+builder.Services.AddSingleton<IChatService, OpenAIChatService>();
+builder.Services.AddSingleton<IEmbeddingsService, OpenAIEmbeddingsService>();
+builder.Services.AddSingleton<IVectorSearchService, AzureVectorSearchService>();
+builder.Services.AddSingleton<IChatHistoryRepository, SqLiteChatHistoryRepository>();
 builder.Services.AddSingleton<TeslaHelpDeskService>();
 
 
