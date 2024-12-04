@@ -70,16 +70,25 @@ cd smartbot
 ```bash
 cd SmartBOT.WebAPI
 ```
-
 ### 3. Execute o projeto:
 ```bash
 dotnet run
 ```
-
 ### 4. A API será iniciada. Você pode acessar o Swagger 
 ```bash
 http://localhost:5053/swagger
 ```
+### 5. Abra um novo terminal e navegue até a pasta do Console App: 
+```bash
+cd SmartBOT.ConsoleApp
+```
+
+### 6. Execute o projeto:
+```bash
+dotnet run
+```
+
+
 
 
 
