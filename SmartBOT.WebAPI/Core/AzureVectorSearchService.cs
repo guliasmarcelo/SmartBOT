@@ -70,3 +70,19 @@ public class AzureVectorSearchService : IVectorSearchService
     }
 }
 
+public class SearchResponse
+{
+    public List<SearchResult> Value { get; set; }
+}
+
+public class SearchResult
+{
+    [JsonPropertyName("content")]
+    public string Content { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; }
+
+    [JsonPropertyName("@search.score")]
+    public float Score { get; set; }
+}
