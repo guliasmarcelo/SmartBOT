@@ -137,6 +137,7 @@ SmartBOT/SmartBOT.WebAPI/chat_history.db
 
 
 
+   
     
 ## Contato
 If you have any questions or need support, please contact:
