@@ -110,6 +110,14 @@ dotnet run
    - GET /api/chat/history/{helpdeskId}
    - Retorna o histórico de mensagens associado ao helpdeskId.
 
+## Exemplo de Teste com curl
+Enviar Mensagem:
+```bash
+curl -X POST http://localhost:5053/api/chat/{helpdeskId} \
+-H "Content-Type: application/json" \
+-d '{"message": "What is the price of Tesla Model S?"}'
+
+```
 
 
 
