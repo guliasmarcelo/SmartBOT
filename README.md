@@ -11,10 +11,8 @@ SmartBOT is a solution that includes:
 
 This guide provides a step-by-step guide to set up and run the project.
 
----
 
 ## Prerequisites
-
 
 Antes de começar, certifique-se de ter os seguintes itens instalados no seu ambiente:
 
@@ -26,7 +24,7 @@ Antes de começar, certifique-se de ter os seguintes itens instalados no seu amb
 3. **Banco de Dados**:
    - O projeto utiliza SQLite, que não requer instalação adicional. O arquivo do banco será criado automaticamente ao executar a WebAPI.
 
----
+
 
 ## Configuration
 
@@ -54,7 +52,7 @@ Before running the solution, ensure that the API keys and connection strings are
   "AllowedHosts": "*"
 }
 ```
-Replace \<Your OpenAI API Key \> and \<Your Azure AI Search API Key \> with your respective API keys.
+Replace **\<Your OpenAI API Key\>** and **\<Your Azure AI Search API Key\>** with your respective API keys.
 
 
 ---
@@ -62,16 +60,40 @@ Replace \<Your OpenAI API Key \> and \<Your Azure AI Search API Key \> with your
 
 ## **Project Setup**
 
-### **1. Clone the Repository**
-
-Clone the repository to your local machine:
-
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/your-username/smartbot.git
 cd smartbot
 ```
 
-## Running the Project
-### **1. Clone the Repository**
+### 2. Navegue até a pasta da WebAPI:
+```bash
+cd SmartBOT.WebAPI
+```
+
+### 3. Execute o projeto:
+```bash
+dotnet run
+```
+
+### 4. A API será iniciada. Você pode acessar o Swagger 
+```http
+http://localhost:5053/swagger
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
