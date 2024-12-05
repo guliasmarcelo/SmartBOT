@@ -59,19 +59,21 @@ public class OpenAIChatService : IChatService
      string userMessage,
      string knowledgeBase,
      string model,
-     string instructionsSystemMessage)
+     string instructionsMessage,
+     string? clarificationMessage = null)
     {
-        // Verificar e adicionar a mensagem de sistema com isntruçoes  apenas uma vez
-        if (!messages.Any(m => m.Role == "system" && m.Content == instructionsSystemMessage))
+        // Adicionar a mensagem de sistema na primeira interação
+        if (!messages.Any())
         {
             var systemMessageObj = new ChatMessage
             {
                 Role = "system",
-                Content = instructionsSystemMessage
+                Content = instructionsMessage
             };
-            messages.Insert(0, systemMessageObj); // Garante que esteja no início
+            messages.Add(systemMessageObj);
             await _chatHistoryRepository.SaveMessageAsync(helpdeskId, systemMessageObj);
         }
+
 
         // Adicionar FAQ como mensagem do sistema, se fornecida
         if (!string.IsNullOrWhiteSpace(knowledgeBase))
@@ -81,13 +83,22 @@ public class OpenAIChatService : IChatService
                 Role = "system",
                 Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
             };
+            messages.Add(knowledgeMessage);
+            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, knowledgeMessage);
+        }
 
-            // Adicionar após a mensagem de sistema principal, mas antes da mensagem do usuário
-            if (!messages.Any(m => m.Role == "system" && m.Content.StartsWith("Here is some FAQ information")))
+
+        // Adicionar mensagem de clarificação, se fornecida
+        if (!string.IsNullOrEmpty(clarificationMessage))
+        {
+            var clarificationMessageObj = new ChatMessage
             {
-                messages.Insert(1, knowledgeMessage); // Após a mensagem de sistema principal
-                await _chatHistoryRepository.SaveMessageAsync(helpdeskId, knowledgeMessage);
-            }
+                Role = "assistant",
+                Content = clarificationMessage
+            };
+            messages.Add(clarificationMessageObj);
+            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, clarificationMessageObj);
+            return clarificationMessage; // Retorna diretamente a mensagem de clarificação
         }
 
         // Adicionar mensagem do usuário

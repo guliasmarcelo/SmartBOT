@@ -13,16 +13,15 @@ public class TeslaHelpDeskService : IHelpDeskService
 
     // Mensagem de sistema para configurar o comportamento do agente
     private const string SystemMessage = @"  
-You are ClaudIA, a support assistant specialized in answering questions about Tesla Motors and its products. 
-Your responses must be concise, using simple language, and limited to no more than three sentences.
-If the user asks about anything unrelated to Tesla Motors or its products, politely inform them that you can only provide information about Tesla Motors.
-    
-You are SmartBOT, a support assistant dedicated to answering questions exclusively about Tesla Motors and its products. Your goal is to help users by leveraging a dynamic FAQ knowledge base extracted through semantic searches. 
+You are SmartBOT, a support assistant dedicated to answering questions exclusively about Tesla Motors and its products. Your goal is to help users by leveraging a dynamic FAQ knowledge base extracted through semantic searches.
 
 #### Rules:
 1. You must only provide answers related to Tesla Motors and its products. Do not respond to questions outside this scope.
 2. Your responses should be based strictly on the information available in the extracted FAQ knowledge base. If the knowledge base does not contain relevant information, kindly clarify with the user to better understand their question or redirect the query appropriately.
-3. If unsure of an answer, use clarifications sparingly—up to two times per conversation. If more clarification is needed, politely inform the user that the query will be escalated to a human agent for further assistance.
+3. If unsure of an answer, use clarifications sparingly—up to two times per conversation. 
+4. When providing clarification, always start the response with ""Clarification: "" (in English) or ""Clarificação: "" (in Portuguese). For example:
+   - Clarification: I currently do not have detailed information on that.
+   - Clarificação: Atualmente, não tenho informações detalhadas sobre isso.
 
 #### Behavior:
 1. Keep your language simple, clear, and user-friendly.
@@ -30,9 +29,9 @@ You are SmartBOT, a support assistant dedicated to answering questions exclusive
 3. If the user's question is outside the scope of Tesla Motors, gently inform them that you are only equipped to handle questions related to Tesla Motors.
 
 #### Knowledge Base Usage:
-1. Use only the information marked with ""#### FAQ Entry"" as your knowledge source.
-2. Leverage the semantic similarity scores to prioritize the most relevant FAQ entries when responding.
-3. Clearly inform the user if a response is derived from the knowledge base by referencing the ""FAQ Entry"" tag.
+1. Use the most relevant FAQ entries based on their semantic similarity scores, prioritizing higher scores when crafting your response.
+2. If the provided FAQ entries are insufficient for a confident response, ask the user for additional details or rephrase their query to ensure accuracy.
+3. Inform the user when you rely on specific FAQ entries, e.g., ""Based on the information from our knowledge base: [FAQ].""
 
 Remember, your primary objective is to provide accurate and helpful information about Tesla Motors, ensuring a positive and informative experience for the user.
 
@@ -58,17 +57,39 @@ Remember, your primary objective is to provide accurate and helpful information 
         // Carregar histórico de mensagens
         var messages = await _chatService.LoadChatHistoryAsync(helpdeskId);
 
+        // Verificar o número de clarificações já realizadas
+        var clarificationCount = messages.Count(m => m.Role == "assistant" &&
+                                                     (m.Content.StartsWith("Clarification: ") ||
+                                                      m.Content.StartsWith("Clarificação: ")));
+
+
+
+        if (clarificationCount >= 2)
+        {
+            var escalationMessage = "I'm sorry, but I cannot clarify further. Your query will be escalated to a human assistant. Thank you for your understanding.";
+            await _chatService.SendUserMessageAsync(
+                helpdeskId,
+                messages,
+                userMessage,
+                string.Empty,
+                "gpt-4o",
+                SystemMessage,
+                escalationMessage
+            );
+            return escalationMessage;
+        }
+
+
+
         // Obter embedding da mensagem do usuário
         var embeddedQuestion = await _embeddingsService.GetEmbeddingAsync(userMessage);
 
         // Realizar busca vetorial na base de conhecimento
         var searchResults = await _vectorDbSearchService.SearchAsync(embeddedQuestion, "tesla_motors", 10, 3);
 
-        // Validar resultados da busca
-        //if (!searchResults.Any())
-        //{
-        //    throw new Exception("No relevant results found in the knowledge base.");
-        //}
+        
+
+
 
         // Formatar a base de conhecimento
         var knowledgeBase = FormatKnowledgeBase(searchResults);
