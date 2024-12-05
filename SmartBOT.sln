@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{49EB9C50-0F5C-47C6-9A6F-F0230284D416}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		..\..\..\Users\gulia\OneDrive\Excalidraw\Smart Bot\Fluxograma.png = ..\..\..\Users\gulia\OneDrive\Excalidraw\Smart Bot\Fluxograma.png
 	EndProjectSection
 EndProject
 Global
