@@ -127,6 +127,9 @@ SmartBOT/
 <img src="SmartBOT.WebAPI/Docs/Fluxograma.png" alt="Descrição da imagem" width="400">
 
 
+## Fluxo 
+![Descrição da imagem](SmartBOT.WebAPI/Docs/Fluxograma.png)
+
 
 
 
