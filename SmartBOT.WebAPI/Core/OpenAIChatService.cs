@@ -79,7 +79,7 @@ public class OpenAIChatService : IChatService
             var knowledgeMessage = new ChatMessage
             {
                 Role = "system",
-                Content = $"{knowledgeBase}"
+                Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
             };
 
             // Adicionar após a mensagem de sistema principal, mas antes da mensagem do usuário
