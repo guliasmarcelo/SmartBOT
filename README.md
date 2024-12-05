@@ -123,11 +123,8 @@ SmartBOT/
 ```
 
 
-## Fluxo 
-<img src="SmartBOT.WebAPI/Docs/Fluxograma.png" alt="Descrição da imagem" width="400">
 
-
-## Fluxo 
+## High-level component flow 
 ![Descrição da imagem](SmartBOT.WebAPI/Docs/Fluxograma.png)
 
 
