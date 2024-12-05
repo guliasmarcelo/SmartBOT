@@ -123,6 +123,13 @@ SmartBOT/
 ```
 
 
+## Fluxo 
+<img src="SmartBOT.WebAPI/Docs/Fluxograma.png" alt="Descrição da imagem" width="400">
+
+
+
+
+
 ## Main Technical Decisions
 1. SQLite for Persistence:
     - Chosen for simplicity and portability.
