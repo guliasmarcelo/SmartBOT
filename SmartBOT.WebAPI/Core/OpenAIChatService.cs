@@ -54,22 +54,22 @@ public class OpenAIChatService : IChatService
     }
 
     public async Task<string> SendUserMessageAsync(
-        string helpdeskId,
-        List<ChatMessage> messages,
-        string userMessage,
-        string knowledgeBase,
-        string model,
-        string systemMessage)
+     string helpdeskId,
+     List<ChatMessage> messages,
+     string userMessage,
+     string knowledgeBase,
+     string model,
+     string instructionsSystemMessage)
     {
-        // Adicionar a mensagem de sistema na primeira interação
-        if (!messages.Any())
+        // Verificar e adicionar a mensagem de sistema com isntruçoes  apenas uma vez
+        if (!messages.Any(m => m.Role == "system" && m.Content == instructionsSystemMessage))
         {
             var systemMessageObj = new ChatMessage
             {
                 Role = "system",
-                Content = systemMessage
+                Content = instructionsSystemMessage
             };
-            messages.Add(systemMessageObj);
+            messages.Insert(0, systemMessageObj); // Garante que esteja no início
             await _chatHistoryRepository.SaveMessageAsync(helpdeskId, systemMessageObj);
         }
 
@@ -79,15 +79,20 @@ public class OpenAIChatService : IChatService
             var knowledgeMessage = new ChatMessage
             {
                 Role = "system",
-                Content = $"Here is some FAQ information that might help:\n{knowledgeBase}"
+                Content = $"{knowledgeBase}"
             };
-            messages.Add(knowledgeMessage);
-            await _chatHistoryRepository.SaveMessageAsync(helpdeskId, knowledgeMessage);
+
+            // Adicionar após a mensagem de sistema principal, mas antes da mensagem do usuário
+            if (!messages.Any(m => m.Role == "system" && m.Content.StartsWith("Here is some FAQ information")))
+            {
+                messages.Insert(1, knowledgeMessage); // Após a mensagem de sistema principal
+                await _chatHistoryRepository.SaveMessageAsync(helpdeskId, knowledgeMessage);
+            }
         }
 
         // Adicionar mensagem do usuário
         var userMessageObj = new ChatMessage { Role = "user", Content = userMessage };
-        messages.Add(userMessageObj);
+        messages.Add(userMessageObj); // Sempre no final
         await _chatHistoryRepository.SaveMessageAsync(helpdeskId, userMessageObj);
 
         // Preparar requisição para OpenAI
@@ -125,5 +130,6 @@ public class OpenAIChatService : IChatService
 
         return assistantMessage ?? throw new Exception("Error when trying to answer the question!");
     }
+
 }
 
